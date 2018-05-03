@@ -1,3 +1,6 @@
+/**
+ * @module Utils/mimeData
+ */
 export const MIME_DATA = {
   '00000014':'video/mp4',
   '00000020':'video/mp4',

@@ -2,13 +2,14 @@
   text-align: center;
   margin-top: 20px;
 }
-
+/***************************Title text*******************************/
 .title-text{
   font-size: -webkit-xxx-large;
   margin-top: 150px;
   margin-bottom: 50px;
 }
-
+/***************************Title text ends**************************/
+/***************************Upload button****************************/
 .upload-btn-wrapper {
   position: relative;
   overflow: hidden;
@@ -32,3 +33,9 @@
   top: 0;
   opacity: 0;
 }
+/***************************Upload button ends***********************/
+/***************************Result container*************************/
+.file-result-container{
+  margin-top: 50px;
+}
+/***************************Result container ends********************/

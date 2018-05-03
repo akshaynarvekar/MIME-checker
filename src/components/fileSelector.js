@@ -9,35 +9,50 @@ import {MIME_DATA} from './../Utils/mimeData';
 class FileSelector extends Component{
 
   /**
-   * Get a promise for a method.
+   * Read the first 4-bytes of filestream.
    *
-   * @param {string} name The API method to call.
-   * @param {Object} [args={}] Arguments to send via postMessage.
-   * @return {Promise}
+   * @method readFileBuffer
+   * @param {Object} event On-change event of the input.
+   * @return null
    */
   readFileBuffer(event){
     var file = event.target.files[0],
         fileReader = new FileReader(file),
-        fileHead = file.slice(0, 4);
+        fileHead = file.slice(0, 4);//Get the first 4-bytes of the file signature
     fileReader.onloadend = this.readSuccess.bind(this);
-    fileReader.readAsArrayBuffer(fileHead);
+    fileReader.readAsArrayBuffer(fileHead);//read the file signature as an Array Buffer
+    $('.file-result-container').empty().append('<span><b>File Name: </b>'+file.name+'</span><br/><br/>');
   }
 
+ /**
+ * Callback called on completion of read.
+ *
+ * @method readSuccess
+ * @param {Object} event On-load event of the file array buffer.
+ * @return null
+ */
   readSuccess(event){
     if (event.target.readyState === FileReader.DONE) {
-      var uint = new Uint8Array(event.target.result),
-          bytes = [],
+      var uintArr = new Uint8Array(event.target.result),//Convert the result to Uint8Arry
+          byteArr = [],
           hexVal;
-      uint.forEach((byte) => {
-          var byteStr = byte.toString(16);
-          byteStr = byteStr.length === 1 ? '0'+byteStr : byteStr;
-          bytes.push(byteStr);
-      });
-      hexVal = bytes.join('').toUpperCase();
-      $('#files').empty().append('<span>'+this.getMIMEType(hexVal)+'</span>');
+      uintArr.forEach((elem) => {
+          var elemStr = elem.toString(16);
+          elemStr = elemStr.length === 1 ? '0'+elemStr : elemStr;
+          byteArr.push(elemStr);
+      });//Map each Uint8 value to a HEX value
+      hexVal = byteArr.join('').toUpperCase();
+      $('.file-result-container').append('<span><b>MIME Type: </b>'+this.getMIMEType(hexVal)+'</span>');
     }
   }
 
+  /**
+  * Retrieve the MIME type from the mapped data.
+  *
+  * @method getMIMEType
+  * @param {string} hexVal Hexadecimal value of first 4 bytes of file signature
+  * @return {string} MIME type of the file
+  */
   getMIMEType(hexVal){
     if(MIME_DATA[hexVal] !== undefined){
       return MIME_DATA[hexVal];
@@ -46,6 +61,12 @@ class FileSelector extends Component{
     }
   }
 
+  /**
+  * Render the view of the application.
+  *
+  * @method render
+  * @return {Template} Template of the application
+  */
   render(){
     return(
       <div>
@@ -58,7 +79,7 @@ class FileSelector extends Component{
               }}
           />
         </div>
-        <div id="files"></div>
+        <div id="file-result-container" className="file-result-container"></div>
       </div>
     )
   }
